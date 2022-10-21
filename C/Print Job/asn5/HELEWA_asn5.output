@@ -1,0 +1,205 @@
+Script started on 2021-12-01 23:41:40-05:00 [TERM="xterm-256color" TTY="/dev/pts/27" COLUMNS="120" LINES="30"]
+]0;helewa@compute:~/courses/CS2211/assignments/asn5[?2004h[helewa@compute asn5]$ date
+[?2004lWed Dec  1 11:41:43 PM EST 2021
+]0;helewa@compute:~/courses/CS2211/assignments/asn5[?2004h[helewa@compute asn5]$ whoami
+[?2004lhelewa
+]0;helewa@compute:~/courses/CS2211/assignments/asn5[?2004h[helewa@compute asn5]$ ls -l
+[?2004ltotal 143
+-rw-r--r-- 1 helewa helewa  3389 Dec  1 22:50 addJob.c
+-rwxr-xr-x 1 helewa helewa 25264 Dec  1 23:37 [0m[01;32ma.out[0m
+-rw-rw-r-- 1 helewa helewa  1901 Dec  1 23:00 Asn_SubmissionForm.txt
+-rw-r--r-- 1 helewa helewa  1501 Dec  1 23:37 checkCycleCount.c
+-rw-r--r-- 1 helewa helewa   832 Dec  1 22:52 createDocument.c
+-rw-r--r-- 1 helewa helewa   473 Dec  1 22:53 createList.c
+-rw-r--r-- 1 helewa helewa   821 Dec  1 23:13 definitions.h
+-rw-r--r-- 1 helewa helewa   329 Dec  1 22:54 freeMemory.c
+-rw-r--r-- 1 helewa helewa    83 Dec  1 22:37 headers.h
+-rw-r--r-- 1 helewa helewa     0 Dec  1 23:41 HELEWA_asn5.output
+-rw-r--r-- 1 helewa helewa   605 Dec  1 23:30 increaseCycleCount.c
+-rw-r--r-- 1 helewa helewa  2891 Dec  1 23:29 main.c
+-rw-r--r-- 1 helewa helewa   274 Dec  1 22:54 printJob.c
+-rw-r--r-- 1 helewa helewa   370 Dec  1 22:52 removeJob.c
+]0;helewa@compute:~/courses/CS2211/assignments/asn5[?2004h[helewa@compute asn5]$ cate main.c[K,c[K[K[Kc[K.c[1P main.c
+[?2004l/* CS2211a 2021 */
+/* Assignment 05 */
+/* Hala Elewa */
+/* 251170694 */
+/* HELEWA */
+/* 12/1/2021 */
+#include "headers.h"
+
+int main() {
+
+    srand(time(NULL));
+
+    LIST *list = createList();
+
+    int iterations = ITERATIONS;
+
+    LIST_NODE *active = NULL;
+
+    while (iterations--) {
+
+        int chance = 1 + rand() % 10; // generate the chance to add a nwe job
+
+        // check if the chance 10% is hit
+        // if so, insert the job into the queue jobs (LinkedList)
+        if (chance == 1) {
+
+            DOCUMENT *doc = createDocument();
+
+            addJob(list, doc);
+
+#if DEBUG_ADDING
+            printf("\nAdding to Queue - Doc: %d NoPages: %d Priority: %d\n",
+                   doc->documentNumber, doc->pages, doc->priority);
+#endif
+        }
+
+        if (active == NULL) {
+            if (list->counter) {
+                active = list->head;
+                removeJob(list);
+            } else {
+#if DEBUG_LIST
+                printf("EMPTY QUEUE - no print jobs currently in queue\n");
+#endif
+            }
+        } else {
+            // print the job
+            printJob(active);
+
+            DOCUMENT *activeDoc = (DOCUMENT *) active->dataPtr;
+            if (activeDoc->pages >= 0) {
+#if DEBUG_PRINT_PROCESS
+                printf("PRINTING - DOCUMENT: %d   PAGE: %d   Priority: %d\n",
+                       activeDoc->documentNumber, activeDoc->pages, activeDoc->priority);
+#endif
+            }
+
+            // all pages have been printed
+            if (activeDoc->pages == 0) {
+                printf("Print Job Completed - Document Number:  %d - Cycle Count:  %d\n",
+                       activeDoc->documentNumber, activeDoc->cycles);
+
+                active = NULL; // remove the job from printer
+            }
+        }
+
+        if (list->counter == 0) {
+#if DEBUG_LIST
+            printf("EMPTY QUEUE - no print jobs currently in queue\n");
+#endif
+        } else { // there is jobs in the queue, print out the list
+#if DEBUG_LIST
+            printf("\nCurrent Printer Queue Size: %d\n", list->counter);
+            LIST_NODE *tmp = list->head;
+
+            while (tmp != NULL) {
+                DOCUMENT *doc = (DOCUMENT *) tmp->dataPtr;
+                printf("Current Printer Queue : DocNum %d  NumOfPages %d  PriorityLevel %d  NumOfCycles %d\n",
+                       doc->documentNumber, doc->pages, doc->priority, doc->cycles);
+                tmp = tmp->next;
+            }
+
+            if (list->counter)
+                printf("END OF LIST\n\n");
+#endif
+        }
+
+        // increase the cycle count for each job in the list
+        increaseCycle(list);
+
+        // check if any job cycle count has exceeded the MAXCYCLE
+        checkCycleCount(list);
+    }
+
+    printf("\nEnd of Program - * HALA ELEWA *\n");
+    printf("Number of printer jobs left in queue: %d\n", list->counter);
+
+    // free the memory
+    freeMemory(list);
+
+    return 0;
+}
+
+]0;helewa@compute:~/courses/CS2211/assignments/asn5[?2004h[helewa@compute asn5]$ cat main.c[5Pls -lwhoami[2Pdateexitls -lwhoami[2Pdate./a.outgcc main.c addJob.c checkCycleCount.c createList.c createDocument.c removeJob.c freeMemory.c increaseCycleCount.c printJob.c
+[?2004l]0;helewa@compute:~/courses/CS2211/assignments/asn5[?2004h[helewa@compute asn5]$ .a.out[K[K[K[K[K[K./a.out
+[?2004lPrint Job Completed - Document Number:  1 - Cycle Count:  1
+Print Job Completed - Document Number:  2 - Cycle Count:  12
+Print Job Completed - Document Number:  5 - Cycle Count:  5
+Print Job Completed - Document Number:  3 - Cycle Count:  27
+Print Job Completed - Document Number:  7 - Cycle Count:  2
+Print Job Completed - Document Number:  6 - Cycle Count:  16
+Print Job Completed - Document Number:  4 - Cycle Count:  49
+Print Job Completed - Document Number:  8 - Cycle Count:  34
+Print Job Completed - Document Number:  10 - Cycle Count:  6
+Print Job Completed - Document Number:  11 - Cycle Count:  10
+Print Job Completed - Document Number:  13 - Cycle Count:  11
+Print Job Completed - Document Number:  12 - Cycle Count:  31
+Print Job Completed - Document Number:  14 - Cycle Count:  20
+Print Job Completed - Document Number:  16 - Cycle Count:  17
+Print Job Completed - Document Number:  15 - Cycle Count:  24
+Print Job Completed - Document Number:  9 - Cycle Count:  112
+Print Job Completed - Document Number:  19 - Cycle Count:  14
+Print Job Completed - Document Number:  21 - Cycle Count:  15
+Print Job Completed - Document Number:  18 - Cycle Count:  27
+Print Job Completed - Document Number:  20 - Cycle Count:  29
+Print Job Completed - Document Number:  23 - Cycle Count:  16
+Print Job Completed - Document Number:  22 - Cycle Count:  38
+Print Job Completed - Document Number:  25 - Cycle Count:  12
+Print Job Completed - Document Number:  28 - Cycle Count:  12
+Print Job Completed - Document Number:  26 - Cycle Count:  43
+Print Job Completed - Document Number:  31 - Cycle Count:  2
+Print Job Completed - Document Number:  30 - Cycle Count:  30
+Print Job Completed - Document Number:  34 - Cycle Count:  6
+Print Job Completed - Document Number:  33 - Cycle Count:  25
+Print Job Completed - Document Number:  36 - Cycle Count:  23
+Print Job Completed - Document Number:  27 - Cycle Count:  110
+Print Job Completed - Document Number:  41 - Cycle Count:  15
+Print Job Completed - Document Number:  40 - Cycle Count:  28
+Print Job Completed - Document Number:  44 - Cycle Count:  10
+Print Job Completed - Document Number:  43 - Cycle Count:  27
+Print Job Completed - Document Number:  45 - Cycle Count:  29
+Print Job Completed - Document Number:  48 - Cycle Count:  16
+Print Job Completed - Document Number:  49 - Cycle Count:  42
+Print Job Completed - Document Number:  52 - Cycle Count:  1
+Print Job Completed - Document Number:  32 - Cycle Count:  193
+Print Job Completed - Document Number:  54 - Cycle Count:  2
+Print Job Completed - Document Number:  42 - Cycle Count:  134
+Print Job Completed - Document Number:  58 - Cycle Count:  4
+Print Job Completed - Document Number:  59 - Cycle Count:  5
+Print Job Completed - Document Number:  57 - Cycle Count:  16
+Print Job Completed - Document Number:  61 - Cycle Count:  3
+Print Job Completed - Document Number:  60 - Cycle Count:  22
+Print Job Completed - Document Number:  64 - Cycle Count:  4
+Print Job Completed - Document Number:  65 - Cycle Count:  6
+Print Job Completed - Document Number:  50 - Cycle Count:  182
+Print Job Completed - Document Number:  24 - Cycle Count:  406
+Print Job Completed - Document Number:  68 - Cycle Count:  23
+Print Job Completed - Document Number:  29 - Cycle Count:  393
+Print Job Completed - Document Number:  62 - Cycle Count:  123
+Print Job Completed - Document Number:  73 - Cycle Count:  12
+Print Job Completed - Document Number:  74 - Cycle Count:  28
+Print Job Completed - Document Number:  78 - Cycle Count:  6
+Print Job Completed - Document Number:  76 - Cycle Count:  46
+Print Job Completed - Document Number:  81 - Cycle Count:  18
+Print Job Completed - Document Number:  83 - Cycle Count:  10
+Print Job Completed - Document Number:  87 - Cycle Count:  1
+Print Job Completed - Document Number:  88 - Cycle Count:  6
+Print Job Completed - Document Number:  89 - Cycle Count:  18
+Print Job Completed - Document Number:  82 - Cycle Count:  51
+Print Job Completed - Document Number:  91 - Cycle Count:  10
+Print Job Completed - Document Number:  92 - Cycle Count:  8
+Print Job Completed - Document Number:  93 - Cycle Count:  6
+Print Job Completed - Document Number:  96 - Cycle Count:  2
+Print Job Completed - Document Number:  86 - Cycle Count:  88
+Print Job Completed - Document Number:  97 - Cycle Count:  15
+Print Job Completed - Document Number:  99 - Cycle Count:  13
+
+End of Program - * HALA ELEWA *
+Number of printer jobs left in queue: 28
+]0;helewa@compute:~/courses/CS2211/assignments/asn5[?2004h[helewa@compute asn5]$ exit
+[?2004lexit
+
+Script done on 2021-12-01 23:42:56-05:00 [COMMAND_EXIT_CODE="0"]
